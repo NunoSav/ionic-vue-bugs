@@ -1,19 +1,25 @@
 <template>
-  <ion-page class="ion-page">
-    <ion-header>
+  <ion-page>
+    <ion-header translucent>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button default-href="/" />
+          <ion-back-button />
         </ion-buttons>
 
         <ion-title>Page 2</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content fullscreen>
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">Page 2</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
       <ion-item>
-        <ion-label class="ion-text-wrap" button @click="go()">
-          GO TO ChildPage
+        <ion-label class="ion-text-wrap" button @click="showModal()">
+          Show Modal
         </ion-label>
       </ion-item>
     </ion-content>
@@ -21,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineAsyncComponent, defineComponent } from "vue";
 import {
   IonBackButton,
   IonButtons,
@@ -32,11 +38,12 @@ import {
   IonPage,
   IonToolbar,
   IonTitle,
+  modalController,
 } from "@ionic/vue";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "page2",
+
   components: {
     IonBackButton,
     IonButtons,
@@ -50,16 +57,28 @@ export default defineComponent({
   },
 
   setup() {
-    const router = useRouter();
-    const go = () => {
-      console.log("GO");
-      router.push({
-        name: "childPage",
-      });
+    const showModal = async (): Promise<void> => {
+      try {
+        const modal = await modalController.create({
+          component: defineAsyncComponent(
+            () => import("@/components/Modal.vue")
+          ),
+          componentProps: {
+            close: () => {
+              modal.dismiss();
+            },
+          },
+          swipeToClose: true,
+        });
+
+        await modal.present();
+      } catch (error) {
+        console.error(error.message);
+      }
     };
 
     return {
-      go,
+      showModal,
     };
   },
 });

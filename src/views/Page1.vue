@@ -1,29 +1,53 @@
 <template>
-  <ion-page class="ion-page">
-    <ion-header>
+  <ion-page>
+    <ion-header translucent>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button default-href="/" />
-        </ion-buttons>
-
         <ion-title>Page 1</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-      <ion-item>
-        <ion-label class="ion-text-wrap" button @click="go()">
-          GO TO Page2
-        </ion-label>
-      </ion-item>
+    <ion-content fullscreen>
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">Page 1</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-list>
+        <ion-radio-group v-model="radio">
+          <ion-item>
+            <ion-label>Red</ion-label>
+            <ion-radio value="red"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Green</ion-label>
+            <ion-radio value="green"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Blue</ion-label>
+            <ion-radio value="blue"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+
+        <ion-item>
+          <ion-label slot="start">Color selected</ion-label>
+          <ion-label slot="end">{{ radio }}</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <ion-list>
+        <ion-item>
+          <ion-label class="ion-text-wrap" button @click="goForward()">
+            Go to Page 2
+          </ion-label>
+        </ion-item>
+      </ion-list>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
 import {
-  IonBackButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonItem,
@@ -31,15 +55,17 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonRadio,
+  IonRadioGroup,
+  IonList,
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "page1",
+
   components: {
-    IonBackButton,
-    IonButtons,
     IonContent,
     IonHeader,
     IonItem,
@@ -47,19 +73,24 @@ export default defineComponent({
     IonPage,
     IonToolbar,
     IonTitle,
+    IonRadio,
+    IonRadioGroup,
+    IonList,
   },
 
   setup() {
     const router = useRouter();
-    const go = () => {
-      console.log("GO");
-      router.push({
-        name: "page2",
-      });
-    };
+    const radio = ref("red");
+    const goForward = () => router.push({ name: "page2" });
+
+    watch(
+      () => radio.value,
+      (newValue) => console.log(newValue)
+    );
 
     return {
-      go,
+      radio,
+      goForward,
     };
   },
 });
