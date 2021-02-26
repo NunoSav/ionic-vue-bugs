@@ -13,27 +13,9 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-list>
-        <ion-radio-group v-model="radio">
-          <ion-item>
-            <ion-label>Red</ion-label>
-            <ion-radio value="red"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Green</ion-label>
-            <ion-radio value="green"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Blue</ion-label>
-            <ion-radio value="blue"></ion-radio>
-          </ion-item>
-        </ion-radio-group>
-
-        <ion-item>
-          <ion-label slot="start">Color selected</ion-label>
-          <ion-label slot="end">{{ radio }}</ion-label>
-        </ion-item>
-      </ion-list>
+      <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
 
       <ion-list>
         <ion-item>
@@ -55,9 +37,9 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonRadio,
-  IonRadioGroup,
   IonList,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/vue";
 import { defineComponent, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -73,9 +55,9 @@ export default defineComponent({
     IonPage,
     IonToolbar,
     IonTitle,
-    IonRadio,
-    IonRadioGroup,
     IonList,
+    IonRefresher,
+    IonRefresherContent,
   },
 
   setup() {
@@ -83,14 +65,19 @@ export default defineComponent({
     const radio = ref("red");
     const goForward = () => router.push({ name: "page2" });
 
-    watch(
-      () => radio.value,
-      (newValue) => console.log(newValue)
-    );
+    const doRefresh = (event: any) => {
+      console.log("Begin async operation");
+
+      setTimeout(() => {
+        console.log("Async operation has ended");
+        event.target.complete();
+      }, 2000);
+    };
 
     return {
       radio,
       goForward,
+      doRefresh,
     };
   },
 });
